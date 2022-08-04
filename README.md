@@ -4,7 +4,7 @@
 ### 1、技术基础
 &emsp;基础架构：基于Linux的多线程HTTP服务器，支持静态资源访问与动态消息回显：\
 ![](./image/ee8a7119390805d051063b64e8d15a3.jpg)
-&emsp;技术运用：
+&emsp;技术运用：\
 &emsp;&emsp;1）针对HTTP捕获GET POST方法，基于cgi脚本(python撰写)实现post请求响应；\
 &emsp;&emsp;2）利用html撰写请求或者读取测试界面，利用多线程服务增加并发性能；\
 &emsp;&emsp;3）双管道实现进程间通信；\
