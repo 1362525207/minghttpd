@@ -26,40 +26,40 @@ struct mypar{
 };
 class httpd {
 public:
-	//static void* accept_request(void* A,void* from_client){//´¦ÀíhttpÇëÇó
+	//static void* accept_request(void* A,void* from_client){//å¤„ç†httpè¯·æ±‚
 	static void* accept_request(void* nowpar){
 	mypar* newpar = static_cast<mypar*>(nowpar);
 	//httpd *thiscla = static_cast<httpd*>(A);
 	httpd *thiscla=(newpar->httpnow);
 	//int client = *(int *)from_client;
  	int client = newpar->client_sock;
-	char buf[1024];//»º´æ´æ´¢
-	int numchars;//¶ÁÈ¡Ò»ĞĞµÄ³¤¶È
-	char method[255];//ÅĞ¶ÏÊÇpost»¹ÊÇget
+	char buf[1024];//ç¼“å­˜å­˜å‚¨
+	int numchars;//è¯»å–ä¸€è¡Œçš„é•¿åº¦
+	char method[255];//åˆ¤æ–­æ˜¯postè¿˜æ˜¯get
 	char url[255];
-	char path[512];//ÎÄ¼ş·ÃÎÊÂ·¾¶
+	char path[512];//æ–‡ä»¶è®¿é—®è·¯å¾„
 	size_t i=0, j=0;
 	struct stat st;
-	int cgi = 0;//cgi±êÖ¾·û
-	char* query_string = NULL;//½ØÖ¹µÄĞÅÏ¢
-	numchars = thiscla->get_line(client, buf, sizeof(buf));//»ñµÃµÚÒ»ĞĞĞÅÏ¢
-	while (!ISspace(buf[j]) && (i < sizeof(method) - 1))//»ñÈ¡·½·¨
+	int cgi = 0;//cgiæ ‡å¿—ç¬¦
+	char* query_string = NULL;//æˆªæ­¢çš„ä¿¡æ¯
+	numchars = thiscla->get_line(client, buf, sizeof(buf));//è·å¾—ç¬¬ä¸€è¡Œä¿¡æ¯
+	while (!ISspace(buf[j]) && (i < sizeof(method) - 1))//è·å–æ–¹æ³•
 	{
 		method[i] = buf[j];
 		i++; j++;
 	}
 	method[i] = '\0';//POST GET !!!!!!
-	if (strcasecmp(method, "GET") && strcasecmp(method, "POST")) //¼È²»ÊÇgetÓÖ²»ÊÇpost
+	if (strcasecmp(method, "GET") && strcasecmp(method, "POST")) //æ—¢ä¸æ˜¯getåˆä¸æ˜¯post
 	{
 		thiscla->unimplemented(client);
 		return NULL;
 	}
-	if (strcasecmp(method, "POST") == 0)  cgi = 1;//Èç¹ûÊÇpost£¬ÔòÆô¶¯cgi
+	if (strcasecmp(method, "POST") == 0)  cgi = 1;//å¦‚æœæ˜¯postï¼Œåˆ™å¯åŠ¨cgi
 	i = 0;
-	while (ISspace(buf[j]) && (j < sizeof(buf))) j++;//¶¨Î»µ½urlµÄ¿ªÊ¼µØ·½
+	while (ISspace(buf[j]) && (j < sizeof(buf))) j++;//å®šä½åˆ°urlçš„å¼€å§‹åœ°æ–¹
 	while (!ISspace(buf[j]) && (i < sizeof(url) - 1) && (j < sizeof(buf)))
 	{
-		url[i] = buf[j];//¶ÁÈ¡url×ÊÔ´ĞÅÏ¢
+		url[i] = buf[j];//è¯»å–urlèµ„æºä¿¡æ¯
 		i++; j++;
 	}
 	url[i] = '\0';
@@ -67,30 +67,30 @@ public:
 		query_string = url;
 		while ((*query_string != '?') && (*query_string != '\0'))
 			query_string++;
-		if (*query_string == '?')//Èç¹ûÓĞ²ÎÊı£¬ĞèÒªÆô¶¯cgi£¬¶¨Î»µ½²ÎÊıµÄµÚÒ»¸ö
+		if (*query_string == '?')//å¦‚æœæœ‰å‚æ•°ï¼Œéœ€è¦å¯åŠ¨cgiï¼Œå®šä½åˆ°å‚æ•°çš„ç¬¬ä¸€ä¸ª
 		{
 			cgi = 1;
-			*query_string = '\0';//urlÔòÊÇ×ÊÔ´µÄ¿ªÍ·
+			*query_string = '\0';//urlåˆ™æ˜¯èµ„æºçš„å¼€å¤´
 			query_string++;
 		}
 	}
 	sprintf(path, "minghttp%s", url);
-	if (path[strlen(path) - 1] == '/') strcat(path, "index.html");//Èç¹ûÓĞ/£¬Ôò¼ÓÉÏÒ»²¿·Ö
+	if (path[strlen(path) - 1] == '/') strcat(path, "test.html");//å¦‚æœæœ‰/ï¼Œåˆ™åŠ ä¸Šä¸€éƒ¨åˆ†
 	if (stat(path, &st) == -1) {
 		while ((numchars > 0) && strcmp("\n", buf))  /* read & discard headers */
 			numchars = thiscla->get_line(client, buf, sizeof(buf));
 		thiscla->not_found(client);
 	}
 	else {
-		if ((st.st_mode & S_IFMT) == S_IFDIR) {//Èç¹ûÇëÇó²ÎÊıÎªÄ¿Â¼, ×Ô¶¯´ò¿ªtest.html
+		if ((st.st_mode & S_IFMT) == S_IFDIR) {//å¦‚æœè¯·æ±‚å‚æ•°ä¸ºç›®å½•, è‡ªåŠ¨æ‰“å¼€test.html
 			strcat(path, "/test.html");
 		}
 		if ((st.st_mode & S_IXUSR) ||
 			(st.st_mode & S_IXGRP) ||
 			(st.st_mode & S_IXOTH))
-			//S_IXUSR:ÎÄ¼şËùÓĞÕß¾ß¿ÉÖ´ĞĞÈ¨ÏŞ
-			//S_IXGRP:ÓÃ»§×é¾ß¿ÉÖ´ĞĞÈ¨ÏŞ
-			//S_IXOTH:ÆäËûÓÃ»§¾ß¿É¶ÁÈ¡È¨ÏŞ 
+			//S_IXUSR:æ–‡ä»¶æ‰€æœ‰è€…å…·å¯æ‰§è¡Œæƒé™
+			//S_IXGRP:ç”¨æˆ·ç»„å…·å¯æ‰§è¡Œæƒé™
+			//S_IXOTH:å…¶ä»–ç”¨æˆ·å…·å¯è¯»å–æƒé™ 
 			cgi = 1;
 		if (!cgi) {
 			//cout<<1<<endl;
@@ -104,16 +104,16 @@ public:
 	return NULL;
 	}
 public:
-	void bad_request(int);//±¨´í´íÎóµÄhttpÇëÇó
-	void cat(int, FILE*);//Ö»¶Á·½Ê½»ñÈ¡ĞÅÏ¢
-	void cannot_execute(int);//±¨´í²»ÄÜÖ´ĞĞcgi
-	void error_die(const char*);//´íÎóĞÅºÅÖ¸³ö²¢ÍË³ö
-	void execute_cgi(int, const char*, const char*, const char*);//Ö´ĞĞcgi·şÎñÆ÷
-	int get_line(int, char*, int);//²¶»ñÒ»ĞĞĞÅÏ¢
-	void headers(int, const char*);//»ñÈ¡Í·²¿ĞÅÏ¢
-	void not_found(int);//±¨´í400
-	void serve_file(int, const char*);//»ñÈ¡ÎÄ¼şÄÚÈİ
-	int startup(u_short*);//¿Í»§¶ËÁ¬½Ó
+	void bad_request(int);//æŠ¥é”™é”™è¯¯çš„httpè¯·æ±‚
+	void cat(int, FILE*);//åªè¯»æ–¹å¼è·å–ä¿¡æ¯
+	void cannot_execute(int);//æŠ¥é”™ä¸èƒ½æ‰§è¡Œcgi
+	void error_die(const char*);//é”™è¯¯ä¿¡å·æŒ‡å‡ºå¹¶é€€å‡º
+	void execute_cgi(int, const char*, const char*, const char*);//æ‰§è¡ŒcgiæœåŠ¡å™¨
+	int get_line(int, char*, int);//æ•è·ä¸€è¡Œä¿¡æ¯
+	void headers(int, const char*);//è·å–å¤´éƒ¨ä¿¡æ¯
+	void not_found(int);//æŠ¥é”™400
+	void serve_file(int, const char*);//è·å–æ–‡ä»¶å†…å®¹
+	int startup(u_short*);//å®¢æˆ·ç«¯è¿æ¥
 	void unimplemented(int);
 private:
 
